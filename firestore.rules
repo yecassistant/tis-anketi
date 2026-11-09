@@ -1,0 +1,44 @@
+rules_version = '2';
+
+// Firestore güvenlik kuralları
+// Firebase konsolu → Firestore Database → Rules (Kurallar) sekmesine bu
+// dosyanın tamamını yapıştırın, aşağıdaki e-posta listesini kendi yönetici
+// e-postanızla değiştirin ve "Publish" (Yayınla) deyin.
+//
+// Ne yapar:
+//  - Anket ayarlarını (sorular, iş yerleri, metinler) herkes okuyabilir,
+//    yalnızca yönetici değiştirebilir.
+//  - Anketi dolduran herkes bir cevap EKLEYEBİLİR (giriş gerekmez) ama
+//    hiç kimse başkalarının cevaplarını okuyamaz, değiştiremez, silemez.
+//  - Cevapları yalnızca yönetici okur ve siler.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function yonetici() {
+      return request.auth != null
+        && request.auth.token.email in [
+          "info@dokgemiissendikasi.com"
+          // Başka yönetici eklemek için virgülle ayırıp yeni satır yazın:
+          // , "ikinci@eposta.com"
+        ];
+    }
+
+    match /ayarlar/{belge} {
+      allow read: if true;
+      allow write: if yonetici();
+    }
+
+    match /cevaplar/{cevapId} {
+      allow create: if request.resource.data.keys().hasOnly(
+            ['ad', 'isyeri', 'is', 'cevaplar', 'diger', 'ozet', 'kaynak', 'cihaz', 'tarih'])
+        && request.resource.data.ad is string && request.resource.data.ad.size() <= 120
+        && request.resource.data.isyeri is string && request.resource.data.isyeri.size() <= 120
+        && request.resource.data.is is string && request.resource.data.is.size() <= 120
+        && request.resource.data.cevaplar is map
+        && request.resource.data.ozet is map
+        && request.resource.data.tarih == request.time;
+      allow read, update, delete: if yonetici();
+    }
+  }
+}

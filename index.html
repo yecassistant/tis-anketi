@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TİS Beklenti Anketi</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Türkiye Liman, Dok, Gemi-İş Sendikası toplu iş sözleşmesi beklenti anketi. Yaklaşık 3 dakika sürer.">
+<meta name="theme-color" content="#283044">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Zilla+Slab:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* Düzen: tek sütun, sola hizalı. Lacivert üst bant (amblem bantla aynı lacivert, kabartma gibi oturur),
+   açık çelik-gri zemin, beyaz seçenek kutuları, slab serif soru numaraları, Plex gövde. */
+:root{
+  --lacivert:#283044; --lacivert-2:#1F2636;
+  --krem:#F4E8B0; --krem-2:#DCCF93; --altin:#A98A36;
+  --bant-metin:#D3D8E4;
+  --zemin:#EDEFF3; --kart:#FFFFFF; --kart-2:#F5F6F9;
+  --ink:#1F2537; --ink-2:#566079; --ink-3:#8A91A3;
+  --cizgi:#D6DAE3; --cizgi-2:#B9BFCD;
+  --secili-zemin:#EEF0F6; --secili-kenar:#283044;
+  --kirmizi:#B5302A; --kirmizi-zemin:#FBEDEC;
+  --yesil:#2F7D5C; --yesil-zemin:#E7F3EC;
+  --birincil:#283044; --birincil-metin:#F4E8B0;
+  --odak:#A98A36;
+  --f-baslik:"Zilla Slab","Rockwell","Roboto Slab",Georgia,serif;
+  --f-govde:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  --r:10px; --r-k:7px;
+  --gutter-l:max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r:max(16px, env(safe-area-inset-right, 0px));
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --zemin:#12161F; --kart:#1B2130; --kart-2:#222A3B;
+    --ink:#EEF0F5; --ink-2:#AEB5C7; --ink-3:#7E869B;
+    --cizgi:#2D3547; --cizgi-2:#424B61;
+    --secili-zemin:#262E42; --secili-kenar:#DCCF93;
+    --altin:#D9BE6A; --kirmizi:#E57369; --kirmizi-zemin:#3A2321;
+    --yesil:#5FBF93; --yesil-zemin:#1F3A2E;
+    --birincil:#F4E8B0; --birincil-metin:#1F2636; --odak:#D9BE6A;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --zemin:#12161F; --kart:#1B2130; --kart-2:#222A3B;
+  --ink:#EEF0F5; --ink-2:#AEB5C7; --ink-3:#7E869B;
+  --cizgi:#2D3547; --cizgi-2:#424B61;
+  --secili-zemin:#262E42; --secili-kenar:#DCCF93;
+  --altin:#D9BE6A; --kirmizi:#E57369; --kirmizi-zemin:#3A2321;
+  --yesil:#5FBF93; --yesil-zemin:#1F3A2E;
+  --birincil:#F4E8B0; --birincil-metin:#1F2636; --odak:#D9BE6A;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--zemin);color:var(--ink);font:16px/1.5 var(--f-govde);min-height:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--lacivert);z-index:10}
+img{max-width:100%}
+[hidden]{display:none!important}
+
+/* Üst bant */
+.bant{background:var(--lacivert);color:var(--krem)}
+.bant-ic{max-width:780px;margin:0 auto;padding-block:26px 34px;padding-left:var(--gutter-l);padding-right:var(--gutter-r);display:grid;grid-template-columns:1fr;gap:18px;align-items:start}
+.amblem{width:80px;height:80px;display:block}
+.kurum{margin:0 0 8px;font-size:14px;font-weight:500;color:var(--krem-2)}
+.bant h1{margin:0;font:700 clamp(30px,7vw,46px)/1.06 var(--f-baslik);color:var(--krem);text-wrap:balance;max-width:16ch}
+.bant .aciklama{margin:16px 0 0;max-width:56ch;font-size:16px;line-height:1.55;color:var(--bant-metin)}
+.bant .sure{margin:10px 0 0;font-size:14px;color:var(--krem-2)}
+@media (min-width:720px){
+  .bant-ic{grid-template-columns:1fr 176px;align-items:center;gap:36px;padding-block:46px 54px}
+  .amblem{width:176px;height:176px;order:2}
+}
+
+/* İlerleme */
+.ilerleme{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;height:6px;background:var(--cizgi)}
+.ilerleme-dolgu{height:100%;width:0;background:var(--altin);transition:width .3s ease}
+@media (prefers-reduced-motion:reduce){ .ilerleme-dolgu,.sec,.isaret,.isaret svg,.btn{transition:none} }
+
+/* Gövde */
+.govde{max-width:780px;margin:0 auto;padding-block:4px 56px;padding-left:var(--gutter-l);padding-right:var(--gutter-r)}
+.durum{margin-top:22px;padding:18px 20px;border-radius:var(--r);background:var(--kart);border:1px solid var(--cizgi);color:var(--ink-2)}
+.durum.hata{background:var(--kirmizi-zemin);color:var(--kirmizi);border-color:transparent}
+.uyari{margin:18px 0 0;padding:12px 16px;border-radius:var(--r-k);background:var(--kart-2);border:1px solid var(--cizgi);font-size:14px;color:var(--ink-2)}
+.bolum-baslik{margin:30px 0 14px;font:600 22px/1.2 var(--f-baslik);color:var(--ink)}
+.kimlik-kart{display:grid;gap:18px;padding:20px;background:var(--kart);border:1px solid var(--cizgi);border-radius:var(--r)}
+.alan label{display:block;font-weight:600;font-size:15px;margin-bottom:7px}
+.opsiyon{font-weight:400;color:var(--ink-3);font-size:14px;white-space:nowrap}
+.giris{display:block;width:100%;min-height:50px;padding:12px 14px;font:inherit;font-size:16px;color:var(--ink);background:var(--kart);border:1.5px solid var(--cizgi-2);border-radius:var(--r-k)}
+.giris::placeholder{color:var(--ink-3)}
+.giris:focus{outline:3px solid var(--odak);outline-offset:1px;border-color:var(--odak)}
+textarea.giris{min-height:110px;resize:vertical;line-height:1.5}
+.select-sar{position:relative}
+.select-sar select{appearance:none;-webkit-appearance:none;padding-right:44px;cursor:pointer}
+.select-sar::after{content:"";position:absolute;right:18px;top:50%;width:9px;height:9px;border-right:2px solid var(--ink-2);border-bottom:2px solid var(--ink-2);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.alan .giris + .giris{margin-top:10px}
+.alan.hatali label{color:var(--kirmizi)}
+.alan.hatali .giris{border-color:var(--kirmizi)}
+
+/* Sorular */
+.sorular{margin-top:34px}
+.soru{display:grid;grid-template-columns:46px 1fr;column-gap:12px;row-gap:12px;padding:26px 0 10px;border-top:1px solid var(--cizgi)}
+.soru:first-child{border-top:0;padding-top:0}
+.no{grid-row:1;font:700 30px/1 var(--f-baslik);color:var(--altin);font-variant-numeric:tabular-nums;padding-top:2px}
+.soru-metin{grid-row:1;margin:0;font-size:18px;font-weight:600;line-height:1.35;color:var(--ink);text-wrap:balance;max-width:34em}
+.yardim{grid-column:2;margin:-4px 0 0;font-size:14px;color:var(--ink-2)}
+.secenekler,.metin-sar{grid-column:2;display:grid;gap:8px}
+.hata{grid-column:2;margin:0;font-size:14px;font-weight:500;color:var(--kirmizi)}
+.soru.hatali .no{color:var(--kirmizi)}
+@media (max-width:560px){
+  .soru{grid-template-columns:36px 1fr;column-gap:10px}
+  .no{font-size:25px;padding-top:3px}
+  .secenekler,.metin-sar,.yardim,.hata{grid-column:1 / -1}
+  .yardim{margin-top:-6px}
+}
+
+.sec{position:relative;display:flex;align-items:center;gap:12px;min-height:54px;padding:12px 14px;background:var(--kart);border:1.5px solid var(--cizgi);border-radius:var(--r);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .15s,background .15s}
+.sec input{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}
+.isaret{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--cizgi-2);display:grid;place-items:center;color:var(--birincil-metin);transition:background .15s,border-color .15s}
+.sec[data-tip="checkbox"] .isaret{border-radius:6px}
+.isaret svg{width:13px;height:13px;opacity:0;transition:opacity .15s}
+.sec-metin{font-size:16px;line-height:1.35}
+.sec.secili{border-color:var(--secili-kenar);background:var(--secili-zemin)}
+.sec.secili .sec-metin{font-weight:600}
+.sec.secili .isaret{background:var(--birincil);border-color:var(--birincil)}
+.sec.secili .isaret svg{opacity:1}
+.sec.odak{outline:3px solid var(--odak);outline-offset:2px}
+.sec.pasif{opacity:.45;cursor:not-allowed}
+@media (hover:hover){ .sec:hover:not(.secili):not(.pasif){border-color:var(--cizgi-2);background:var(--kart-2)} }
+.diger-metin{margin-top:2px}
+
+/* Gönder */
+.gonder{margin-top:30px;padding-top:24px;border-top:1px solid var(--cizgi);display:grid;gap:12px}
+.gonder-not{margin:0;font-size:14px;color:var(--ink-2)}
+.btn{font:inherit;font-weight:600;border:0;border-radius:var(--r);padding:14px 22px;min-height:54px;cursor:pointer;transition:transform .08s ease}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible{outline:3px solid var(--odak);outline-offset:2px}
+.btn-ana{width:100%;font-size:17px;background:var(--birincil);color:var(--birincil-metin)}
+.btn-ana:disabled{opacity:.6;cursor:default}
+.btn-ikincil{background:transparent;color:var(--ink);border:1.5px solid var(--cizgi-2)}
+
+/* Teşekkür */
+.tesekkur{padding:40px 0 20px;display:grid;gap:14px;justify-items:start}
+.tesekkur img{width:104px;height:104px}
+.tesekkur h2{margin:10px 0 0;font:700 clamp(30px,6vw,40px)/1.1 var(--f-baslik)}
+.tesekkur p{margin:0;max-width:52ch;font-size:17px;color:var(--ink-2)}
+.tesekkur .btn{margin-top:14px}
+
+.alt{max-width:780px;margin:0 auto;padding-block:0 30px;padding-left:var(--gutter-l);padding-right:var(--gutter-r);font-size:13px;color:var(--ink-3)}
+.alt{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}
+.rozet{display:inline-block;padding:4px 10px;border-radius:999px;background:var(--kart-2);border:1px solid var(--cizgi)}
+.yonetim-link{margin-left:auto;color:var(--ink-3);text-decoration:none;padding:6px 0}
+.yonetim-link:hover{color:var(--ink-2);text-decoration:underline}
+</style>
+</head>
+<body>
+
+<header class="bant">
+  <div class="bant-ic">
+    <img class="amblem" src="assets/logo.png" alt="" width="176" height="176">
+    <div>
+      <p class="kurum" id="kurum">Türkiye Liman, Dok, Gemi-İş Sendikası</p>
+      <h1 id="baslik">Toplu İş Sözleşmesi Beklenti Anketi</h1>
+      <p class="aciklama" id="aciklama"></p>
+      <p class="sure" id="sure"></p>
+    </div>
+  </div>
+</header>
+
+<div class="ilerleme" id="ilerleme" hidden aria-hidden="true"><div class="ilerleme-dolgu" id="ilerlemeDolgu"></div></div>
+
+<main class="govde">
+  <div id="durum" class="durum" role="status">Anket yükleniyor…</div>
+  <p id="oncekiNot" class="uyari" hidden>Bu telefondan daha önce bir cevap gönderildi. Başka biri dolduracaksa devam edebilirsiniz.</p>
+
+  <form id="anket" novalidate hidden>
+    <section id="kimlik"></section>
+    <div id="sorular" class="sorular"></div>
+    <div class="gonder">
+      <p class="gonder-not" id="gonderNot"></p>
+      <button type="submit" class="btn btn-ana" id="gonderBtn">Cevaplarımı gönder</button>
+      <p id="gonderHata" class="hata" hidden></p>
+    </div>
+  </form>
+
+  <section id="tesekkur" class="tesekkur" hidden></section>
+</main>
+
+<footer class="alt"><span class="rozet" id="demoRozet" hidden>Demo modu: Firebase ayarları henüz girilmedi, cevaplar yalnızca bu tarayıcıda saklanır.</span><a class="yonetim-link" href="yonetim.html">Yönetim</a></footer>
+
+<script src="varsayilan-anket.js"></script>
+<script src="firebase-config.js"></script>
+<script type="module">
+(async () => {
+  const VARS = window.ANKET_VARSAYILAN;
+  const FBC = window.FIREBASE_CONFIG || {};
+  const DEMO = !(FBC && FBC.apiKey);
+  const FBV = '13.1.0';
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const klon = x => JSON.parse(JSON.stringify(x));
+  const slug = s => String(s || '').toLocaleLowerCase('tr')
+    .replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ş/g,'s').replace(/ü/g,'u').replace(/â/g,'a').replace(/î/g,'i').replace(/û/g,'u')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+
+  const KAYNAK = (() => {
+    try {
+      const p = new URLSearchParams(location.search).get('i');
+      if (p) return p.slice(0, 80);
+      return location.hash.replace(/^#/, '').slice(0, 80);
+    } catch { return ''; }
+  })();
+
+  const form = $('#anket'), durum = $('#durum'), gonderBtn = $('#gonderBtn');
+  let CFG = null, backend = null;
+
+  function normalize(cfg) {
+    const v = klon(VARS);
+    const c = Object.assign({}, v, cfg || {});
+    c.kimlik = {};
+    for (const k of Object.keys(v.kimlik)) c.kimlik[k] = Object.assign({}, v.kimlik[k], (cfg && cfg.kimlik && cfg.kimlik[k]) || {});
+    c.isyerleri = Array.isArray(c.isyerleri) ? c.isyerleri.filter(Boolean) : [];
+    const sorular = (cfg && Array.isArray(cfg.sorular)) ? cfg.sorular : v.sorular;
+    c.sorular = sorular.map(s => Object.assign({ tip: 'tek', zorunlu: true, diger: false, maxSecim: 0, secenekler: [], aciklama: '' }, s))
+      .map(s => { s.secenekler = Array.isArray(s.secenekler) ? s.secenekler.filter(o => o && o.id) : []; return s; });
+    return c;
+  }
+
+  // ---------- Arka uç ----------
+  function demoBackend() {
+    const demoIsyerleri = ['Örnek Liman A.Ş.', 'Örnek Tersane', 'Örnek Lojistik'];
+    return {
+      async ayarlariGetir() {
+        try { const s = localStorage.getItem('tis_demo_ayarlar'); if (s) return JSON.parse(s); } catch {}
+        const v = klon(VARS); v.isyerleri = demoIsyerleri; return v;
+      },
+      async cevapGonder(c) {
+        let liste = [];
+        try { liste = JSON.parse(localStorage.getItem('tis_demo_cevaplar') || '[]'); } catch {}
+        liste.unshift(Object.assign({}, c, { id: 'yerel-' + Date.now(), tarih: new Date().toISOString() }));
+        localStorage.setItem('tis_demo_cevaplar', JSON.stringify(liste));
+      }
+    };
+  }
+
+  async function firebaseBackend() {
+    const [{ initializeApp }, fs] = await Promise.all([
+      import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-app.js`),
+      import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-firestore.js`)
+    ]);
+    const app = initializeApp(FBC);
+    const db = fs.getFirestore(app);
+    return {
+      async ayarlariGetir() {
+        const snap = await fs.getDoc(fs.doc(db, 'ayarlar', 'anket'));
+        return snap.exists() ? snap.data() : null;
+      },
+      async cevapGonder(c) {
+        await fs.addDoc(fs.collection(db, 'cevaplar'), Object.assign({}, c, { tarih: fs.serverTimestamp() }));
+      }
+    };
+  }
+
+  // ---------- Çizim ----------
+  const alanHtml = (id, def, kontrol) =>
+    `<div class="alan" data-alan="${id}"><label for="alan-${id}">${esc(def.etiket)}${def.zorunlu ? '' : ' <span class="opsiyon">(isteğe bağlı)</span>'}</label>${kontrol}<p class="hata" hidden></p></div>`;
+
+  function kimlikHtml(cfg) {
+    const k = cfg.kimlik;
+    if (!k.ad.goster && !k.isyeri.goster && !k.is.goster) return '';
+    const b = ['<h2 class="bolum-baslik">Hakkınızda</h2><div class="kimlik-kart">'];
+    if (k.ad.goster) b.push(alanHtml('ad', k.ad,
+      `<input class="giris" id="alan-ad" name="ad" type="text" autocomplete="name" autocapitalize="words" maxlength="120">`));
+    if (k.isyeri.goster) {
+      if (cfg.isyerleri.length) {
+        const opts = cfg.isyerleri.map(i => `<option value="${esc(i)}">${esc(i)}</option>`).join('');
+        b.push(alanHtml('isyeri', k.isyeri,
+          `<div class="select-sar"><select class="giris" id="alan-isyeri" name="isyeri"><option value="">Seçiniz</option>${opts}<option value="__diger">Listede yok</option></select></div>` +
+          `<input class="giris" id="alan-isyeri-diger" name="isyeri_diger" type="text" placeholder="İş yerinizin adı" maxlength="120" hidden>`));
+      } else {
+        b.push(alanHtml('isyeri', k.isyeri,
+          `<input class="giris" id="alan-isyeri" name="isyeri" type="text" maxlength="120" autocomplete="organization">`));
+      }
+    }
+    if (k.is.goster) b.push(alanHtml('is', k.is,
+      `<input class="giris" id="alan-is" name="is" type="text" maxlength="120" placeholder="${esc(k.is.ipucu || '')}">`));
+    b.push('</div>');
+    return b.join('');
+  }
+
+  const ISARET = '<span class="isaret" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+  const secenekHtml = (s, o, tip) =>
+    `<label class="sec" data-tip="${tip}"><input type="${tip}" name="${esc(s.id)}" value="${esc(o.id)}">${ISARET}<span class="sec-metin">${esc(o.metin)}</span></label>`;
+
+  function soruHtml(s, i) {
+    const bId = 'sb-' + s.id;
+    const ops = s.zorunlu ? '' : ' <span class="opsiyon">(isteğe bağlı)</span>';
+    let yardim = '';
+    if (s.tip === 'coklu' && s.maxSecim > 0) yardim = `<p class="yardim">En fazla ${s.maxSecim} seçim yapabilirsiniz.</p>`;
+    else if (s.tip === 'coklu') yardim = `<p class="yardim">Birden fazla seçenek işaretleyebilirsiniz.</p>`;
+    else if (s.aciklama) yardim = `<p class="yardim">${esc(s.aciklama)}</p>`;
+    let govde;
+    if (s.tip === 'metin') {
+      govde = `<div class="metin-sar"><textarea class="giris" id="s-${esc(s.id)}" name="${esc(s.id)}" rows="3" maxlength="1000" placeholder="Cevabınızı buraya yazın"></textarea></div>`;
+    } else {
+      const tip = s.tip === 'coklu' ? 'checkbox' : 'radio';
+      govde = `<div class="secenekler" role="${tip === 'radio' ? 'radiogroup' : 'group'}" aria-labelledby="${bId}">` +
+        s.secenekler.map(o => secenekHtml(s, o, tip)).join('') +
+        (s.diger ? secenekHtml(s, { id: '__diger', metin: 'Diğer' }, tip) +
+          `<input class="giris diger-metin" name="${esc(s.id)}__diger" type="text" placeholder="Lütfen belirtin" maxlength="200" hidden>` : '') +
+        `</div>`;
+    }
+    return `<div class="soru" data-soru="${esc(s.id)}" data-tip="${s.tip}" data-max="${s.maxSecim || 0}">` +
+      `<span class="no" aria-hidden="true">${i + 1}</span>` +
+      `<h2 class="soru-metin" id="${bId}">${esc(s.metin)}${ops}</h2>` +
+      yardim + govde + `<p class="hata" hidden></p></div>`;
+  }
+
+  function baslikDoldur(cfg) {
+    $('#kurum').textContent = cfg.kurum;
+    $('#baslik').textContent = cfg.baslik;
+    $('#aciklama').textContent = cfg.aciklama;
+    $('#sure').textContent = cfg.sure;
+    document.title = cfg.baslik;
+  }
+
+  function render(cfg) {
+    $('#kimlik').innerHTML = kimlikHtml(cfg);
+    $('#sorular').innerHTML = cfg.sorular.map(soruHtml).join('');
+    const sel = $('#alan-isyeri');
+    if (sel && sel.tagName === 'SELECT' && KAYNAK) {
+      const hedef = cfg.isyerleri.find(i => slug(i) === slug(KAYNAK));
+      if (hedef) sel.value = hedef;
+    }
+    ilerlemeGuncelle();
+  }
+
+  // ---------- Etkileşim ----------
+  function soruGuncelle(el) {
+    const tip = el.dataset.tip;
+    if (tip === 'metin') return;
+    const max = +el.dataset.max || 0;
+    const etiketler = [...el.querySelectorAll('.sec')];
+    const secili = etiketler.filter(l => l.querySelector('input').checked);
+    etiketler.forEach(l => l.classList.toggle('secili', l.querySelector('input').checked));
+    if (tip === 'coklu' && max > 0) {
+      const dolu = secili.length >= max;
+      etiketler.forEach(l => { const i = l.querySelector('input'); const p = dolu && !i.checked; i.disabled = p; l.classList.toggle('pasif', p); });
+    }
+    const digerInp = el.querySelector('.diger-metin');
+    if (digerInp) {
+      const digerSecili = secili.some(l => l.querySelector('input').value === '__diger');
+      const yeniAcildi = digerSecili && digerInp.hidden;
+      digerInp.hidden = !digerSecili;
+      if (yeniAcildi) digerInp.focus();
+    }
+  }
+
+  function cevaplandiMi(s) {
+    if (s.tip === 'metin') { const t = form.elements[s.id]; return !!(t && t.value.trim()); }
+    return [...form.querySelectorAll(`input[name="${CSS.escape(s.id)}"]`)].some(i => i.checked);
+  }
+
+  function ilerlemeGuncelle() {
+    const n = CFG.sorular.length;
+    const c = CFG.sorular.filter(cevaplandiMi).length;
+    $('#ilerlemeDolgu').style.width = (n ? (c / n) * 100 : 0) + '%';
+    $('#gonderNot').textContent = n === 0 ? '' : (c === n ? 'Tüm soruları cevapladınız.' : `${n} sorudan ${c} tanesi cevaplandı.`);
+  }
+
+  function hataTemizle(kap) {
+    if (!kap) return;
+    kap.classList.remove('hatali');
+    const h = kap.querySelector('.hata'); if (h) h.hidden = true;
+  }
+
+  form.addEventListener('change', e => {
+    const t = e.target;
+    if (t.id === 'alan-isyeri' && t.tagName === 'SELECT') {
+      const d = $('#alan-isyeri-diger');
+      if (d) { const ac = t.value === '__diger'; const yeni = ac && d.hidden; d.hidden = !ac; if (yeni) d.focus(); }
+    }
+    const soru = t.closest('.soru');
+    if (soru) { soruGuncelle(soru); hataTemizle(soru); }
+    hataTemizle(t.closest('.alan'));
+    ilerlemeGuncelle();
+    $('#gonderHata').hidden = true;
+  });
+  form.addEventListener('input', e => {
+    if (!e.target.matches('textarea, input[type="text"]')) return;
+    hataTemizle(e.target.closest('.soru'));
+    hataTemizle(e.target.closest('.alan'));
+    ilerlemeGuncelle();
+  });
+  form.addEventListener('focusin', e => {
+    const sec = e.target.closest('.sec');
+    if (!sec) return;
+    try { if (e.target.matches(':focus-visible')) sec.classList.add('odak'); } catch {}
+  });
+  form.addEventListener('focusout', e => { const sec = e.target.closest('.sec'); if (sec) sec.classList.remove('odak'); });
+
+  const deger = ad => { const el = form.elements[ad]; return el ? String(el.value || '').trim() : ''; };
+  function isyeriDeger() {
+    const el = $('#alan-isyeri'); if (!el) return '';
+    if (el.tagName === 'SELECT') return el.value === '__diger' ? deger('isyeri_diger') : el.value;
+    return String(el.value || '').trim();
+  }
+
+  function dogrula() {
+    const sorunlar = [];
+    const k = CFG.kimlik;
+    const alanKontrol = (id, def, val) => {
+      if (!def.goster || !def.zorunlu || val) return;
+      const el = form.querySelector(`.alan[data-alan="${id}"]`); if (!el) return;
+      el.classList.add('hatali'); const h = el.querySelector('.hata'); h.textContent = 'Bu alanı doldurun.'; h.hidden = false; sorunlar.push(el);
+    };
+    alanKontrol('ad', k.ad, deger('ad'));
+    alanKontrol('isyeri', k.isyeri, isyeriDeger());
+    alanKontrol('is', k.is, deger('is'));
+    for (const s of CFG.sorular) {
+      if (!s.zorunlu || cevaplandiMi(s)) continue;
+      const el = form.querySelector(`.soru[data-soru="${CSS.escape(s.id)}"]`); if (!el) continue;
+      el.classList.add('hatali');
+      const h = el.querySelector('.hata');
+      h.textContent = s.tip === 'metin' ? 'Bu soruyu cevaplayın.' : (s.tip === 'coklu' ? 'En az bir seçenek işaretleyin.' : 'Bir seçenek işaretleyin.');
+      h.hidden = false; sorunlar.push(el);
+    }
+    return sorunlar;
+  }
+
+  function cevapOlustur() {
+    const fd = new FormData(form);
+    const c = {
+      ad: deger('ad'), isyeri: isyeriDeger(), is: deger('is'),
+      cevaplar: {}, diger: {}, ozet: {}, kaynak: KAYNAK,
+      cihaz: (window.matchMedia && matchMedia('(pointer:coarse)').matches) ? 'mobil' : 'masaustu'
+    };
+    for (const s of CFG.sorular) {
+      if (s.tip === 'metin') {
+        const v = String(fd.get(s.id) || '').trim();
+        if (v) { c.cevaplar[s.id] = v; c.ozet[s.id] = { soru: s.metin, cevap: v }; }
+        continue;
+      }
+      const vals = fd.getAll(s.id).map(String);
+      if (!vals.length) continue;
+      const digerMetin = vals.includes('__diger') ? String(fd.get(s.id + '__diger') || '').trim() : '';
+      if (digerMetin) c.diger[s.id] = digerMetin;
+      const etiket = id => id === '__diger' ? (digerMetin ? `Diğer: ${digerMetin}` : 'Diğer') : ((s.secenekler.find(o => o.id === id) || {}).metin || id);
+      c.cevaplar[s.id] = s.tip === 'coklu' ? vals : vals[0];
+      c.ozet[s.id] = { soru: s.metin, cevap: s.tip === 'coklu' ? vals.map(etiket) : etiket(vals[0]) };
+    }
+    return c;
+  }
+
+  function tesekkurGoster(ad) {
+    form.hidden = true; $('#ilerleme').hidden = true; $('#oncekiNot').hidden = true;
+    const ilkAd = (ad || '').trim().split(/\s+/)[0];
+    const t = $('#tesekkur');
+    t.innerHTML = `<img src="assets/logo.png" alt="" width="104" height="104">` +
+      `<h2>Teşekkürler${ilkAd ? ', ' + esc(ilkAd) : ''}.</h2>` +
+      `<p>${esc(CFG.tesekkur)}</p>` +
+      `<button type="button" class="btn btn-ikincil" id="yeniden">Başka biri için doldur</button>`;
+    t.hidden = false;
+    $('#yeniden').addEventListener('click', () => location.reload());
+    try { localStorage.setItem('tis_anket_dolduruldu', String(Date.now())); } catch {}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const sorunlar = dogrula();
+    if (sorunlar.length) {
+      sorunlar[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    gonderBtn.disabled = true; gonderBtn.textContent = 'Gönderiliyor…';
+    const cevap = cevapOlustur();
+    try {
+      await backend.cevapGonder(cevap);
+      tesekkurGoster(cevap.ad);
+    } catch (err) {
+      console.error(err);
+      gonderBtn.disabled = false; gonderBtn.textContent = 'Cevaplarımı gönder';
+      const h = $('#gonderHata'); h.textContent = 'Gönderilemedi. İnternet bağlantınızı kontrol edip tekrar deneyin.'; h.hidden = false;
+    }
+  });
+
+  // ---------- Başlat ----------
+  if (DEMO) $('#demoRozet').hidden = false;
+  try {
+    backend = DEMO ? demoBackend() : await firebaseBackend();
+    CFG = normalize(await backend.ayarlariGetir());
+  } catch (err) {
+    console.error(err);
+    durum.textContent = 'Anket yüklenemedi. İnternet bağlantınızı kontrol edip sayfayı yenileyin.';
+    durum.classList.add('hata');
+    return;
+  }
+  baslikDoldur(CFG);
+  if (!CFG.acik) { durum.textContent = CFG.kapaliMesaj; return; }
+  durum.hidden = true;
+  try { if (localStorage.getItem('tis_anket_dolduruldu')) $('#oncekiNot').hidden = false; } catch {}
+  render(CFG);
+  form.hidden = false;
+  $('#ilerleme').hidden = false;
+})();
+</script>
+</body>
+</html>
